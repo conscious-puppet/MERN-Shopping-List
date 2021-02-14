@@ -55,8 +55,11 @@ const AddItem = () => {
         onClose={onClose}
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Add Item to Shopping List</ModalHeader>
+        <ModalContent
+
+          width={{ base: '80%', md: '400px' }}
+        >
+          <ModalHeader>Add Item</ModalHeader>
           <ModalCloseButton />
           <form onSubmit={handleSubmit(onSubmit)}>
             <ModalBody pb={6}>
