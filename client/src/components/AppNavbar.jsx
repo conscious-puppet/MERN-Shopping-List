@@ -9,7 +9,8 @@ import {
   IconButton,
   MenuList,
   Stack,
-  useMediaQuery
+  useMediaQuery,
+  Divider
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 
@@ -97,8 +98,10 @@ const AppNavbar = () => {
                 variant='outline'
               />
               <MenuList>
-                <Stack spacing={2}>
+                <Stack p={2}>
                   <SignIn />
+
+                  <Divider orientation="horizontal" mt={2} />
                   <Register variant='link' />
                 </Stack>
               </MenuList>
