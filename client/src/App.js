@@ -1,19 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
-import { Provider } from "react-redux";
+import { useDispatch } from "react-redux";
 
-import store from "./redux/configureStore";
 import customTheme from './utils/theme';
 import ShoppingList from './components/ShoppingList';
 
+import { loadUser } from './redux/requests/AuthRequests';
+
+
 function App () {
 
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadUser());
+  }, []);
+
   return (
-    <Provider store={store}>
-      <ChakraProvider theme={customTheme}>
-        <ShoppingList />
-      </ChakraProvider>
-    </Provider>
+    <ChakraProvider theme={customTheme}>
+      <ShoppingList />
+    </ChakraProvider>
   );
 }
 

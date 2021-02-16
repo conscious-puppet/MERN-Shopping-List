@@ -2,14 +2,35 @@ import React from "react";
 import {
   Box,
   Flex,
-  Link
+  HStack,
+  Link,
+  Menu,
+  MenuButton,
+  IconButton,
+  MenuList,
+  Stack,
+  useMediaQuery
 } from "@chakra-ui/react";
+import { HamburgerIcon } from "@chakra-ui/icons";
+
+
+import { useSelector } from 'react-redux';
 
 import { ColorModeSwitcher } from '../utils/ColorModeSwitcher';
 
+import Register from './Register';
+import SignIn from './SignIn';
+import SignOut from './SignOut';
 
 const AppNavbar = () => {
+
+  const { isAuthenticated } = useSelector(state => state.auth);
+
+  const [isLargerThan48em] = useMediaQuery("(min-width: 48em)");
+
+
   return (
+
     <Flex
       justifyContent='space-between'
       alignItems='center'
@@ -20,22 +41,72 @@ const AppNavbar = () => {
       zIndex={4}
       boxShadow='lg'
     >
-      <Flex
-        px={{ base: 4 }}
-        py={{ base: 2 }}
-        alignItems='center'
-        justifyContent="space-between"
-        marginBottom={2}
-        mx='auto'
-        width={{ base: '90%', md: '75%' }}
-      >
-        <Box fontWeight='bold' fontSize='lg'>
-          <Link href='/'>Shopping List</Link>
-        </Box>
-        <ColorModeSwitcher
-          justifySelf="flex-end"
-        />
-      </Flex>
+      {isLargerThan48em ?
+        <Flex
+          px={{ base: 4 }}
+          py={{ base: 2 }}
+          alignItems='center'
+          justifyContent="space-between"
+          my={2}
+          mx='auto'
+          width={{ base: '90%', lg: '75%' }}
+        >
+          <HStack spacing={4} flexShrink='1'>
+            <Box fontWeight='bold' fontSize='lg'>
+              <Link href='/'>Shopping List</Link>
+            </Box>
+            <ColorModeSwitcher />
+          </HStack>
+
+          {isAuthenticated ?
+            <SignOut />
+            :
+            <HStack spacing={4} flexShrink='1' >
+              <SignIn />
+              <Register />
+            </HStack>
+          }
+        </Flex>
+        :
+        <Flex
+          px={{ base: 4 }}
+          py={{ base: 2 }}
+          alignItems='center'
+          justifyContent="space-between"
+          my={2}
+          mx='auto'
+          width={{ base: '90%', lg: '75%' }}
+        >
+
+          <ColorModeSwitcher />
+
+          <Box fontWeight='bold' fontSize='lg' >
+            <Link href='/'>Shopping List</Link>
+          </Box>
+
+
+          {isAuthenticated ?
+            <SignOut />
+
+            :
+
+            <Menu >
+              <MenuButton
+                as={IconButton}
+                icon={<HamburgerIcon />}
+                variant='outline'
+              />
+              <MenuList>
+                <Stack spacing={2}>
+                  <SignIn />
+                  <Register variant='link' />
+                </Stack>
+              </MenuList>
+            </Menu>
+
+          }
+        </Flex>
+      }
     </Flex>
   );
 };

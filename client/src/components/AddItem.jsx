@@ -5,21 +5,25 @@ import {
   Input,
   Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay,
   useDisclosure,
+  useToast
 } from '@chakra-ui/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
 
 // Redux
-import { useDispatch } from 'react-redux';
-import { addItem } from '../redux/slices/ShoppingListSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addItem } from '../redux/requests/ItemRequests';
 
 // Icons
 import { AddIcon } from '@chakra-ui/icons';
 
 const AddItem = () => {
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+
+  const { isAuthenticated } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
 
@@ -38,6 +42,20 @@ const AddItem = () => {
     } else return true;
   }
 
+  const handleAdd = () => {
+    if (isAuthenticated) {
+      onOpen();
+    } else {
+      toast({
+        title: "Unauthorised access",
+        description: "Please login to add an item.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
 
   return (
     <>
@@ -48,7 +66,7 @@ const AddItem = () => {
         isRound
         colorScheme='success'
         variant='solid'
-        onClick={onOpen}
+        onClick={handleAdd}
       />
       <Modal
         isOpen={isOpen}
@@ -57,7 +75,7 @@ const AddItem = () => {
         <ModalOverlay />
         <ModalContent
 
-          width={{ base: '80%', md: '400px' }}
+          width={{ base: '90%', md: '400px' }}
         >
           <ModalHeader>Add Item</ModalHeader>
           <ModalCloseButton />
@@ -65,7 +83,8 @@ const AddItem = () => {
             <ModalBody pb={6}>
               <FormControl isInvalid={errors.item}>
                 <FormLabel>Item</FormLabel>
-                <Input placeholder="Item" name='item' ref={register({ validate: validateItem })} autoFocus />
+                <Input placeholder="Item" name='item' ref={register({ validate: validateItem })} autoFocus
+                />
                 <FormErrorMessage>
                   {errors.item && errors.item.message}
                 </FormErrorMessage>

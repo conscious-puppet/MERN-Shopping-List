@@ -9,7 +9,8 @@ import {
   HStack,
   Badge,
   Divider,
-  CircularProgress
+  CircularProgress,
+  useToast,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 
@@ -18,7 +19,7 @@ import { CheckIcon, DeleteIcon } from '@chakra-ui/icons';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteItem, checkItem, getShoppingList } from '../redux/slices/ShoppingListSlice';
+import { deleteItem, checkItem, getShoppingList } from '../redux/requests/ItemRequests';
 
 // other imports
 import PageContainer from './PageContainer';
@@ -26,14 +27,48 @@ import AddItem from './AddItem';
 
 const ShoppingList = () => {
   const { colorMode } = useColorMode();
+  const toast = useToast();
+
+  const { isAuthenticated, user } = useSelector(state => state.auth);
+
+  const { name = 'name' } = user || {};
 
 
-  const { shoppingList } = useSelector(state => state.shoppingList);
+  const { shoppingList, loadingShoppingList } = useSelector(state => state.shoppingList);
   const dispatch = useDispatch();
+
+
+  const handleDelete = (value) => {
+    if (isAuthenticated) {
+      dispatch(deleteItem(value));
+    } else {
+      toast({
+        title: "Unauthorised access",
+        description: "Please login to make any changes.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleCheck = (value) => {
+    if (isAuthenticated) {
+      dispatch(checkItem(value));
+    } else {
+      toast({
+        title: "Unauthorised access",
+        description: "Please login to make any changes.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   useEffect(() => {
     dispatch(getShoppingList());
-  }, [shoppingList]);
+  }, []);
 
   return (
     <PageContainer>
@@ -47,21 +82,34 @@ const ShoppingList = () => {
         justifyContent='center'
         alignItems='center'
       >
-        <Badge
-          fontSize="0.8em"
-          colorScheme='success'
-          alignSelf='flex-end'
-        >
-          {
-            shoppingList.length > 0 ? `${shoppingList.length} ITEMS` : 'NO ITEMS'
-          }
-        </Badge>
-        {shoppingList ?
+
+        <Flex w='100%' direction='row' >
+          <Badge
+            fontSize="0.8em"
+            colorScheme='primary'
+            justifySelf='flex-start'
+            display={isAuthenticated ? 'inherit' : 'none'}
+          >
+            Hello, {name}
+          </Badge>
+          <Badge
+            fontSize="0.8em"
+            colorScheme='success'
+            justifySelf='flex-end'
+            ml='auto'
+          >
+            {
+              shoppingList.length > 0 ? `${shoppingList.length} ITEMS` : 'NO ITEMS'
+            }
+          </Badge>
+        </Flex>
+
+        {loadingShoppingList === 'success' ?
           <List spacing='1em' mt='1em' w='100%' p={2}>
             {
-              shoppingList.map(item => (
-                <Fade in='true' key={item.id} minw='100%'>
-                  <ListItem w='100%'>
+              shoppingList.map((item, index) => (
+                <Fade in='true' key={index} minW='100%'>
+                  <ListItem w='100%' key={item._id}>
                     <HStack
                       display='flex'
                       w='100%'
@@ -74,7 +122,7 @@ const ShoppingList = () => {
                         colorScheme='success'
                         icon={<CheckIcon />}
                         isRound
-                        onClick={() => dispatch(checkItem({ id: item._id, isChecked: !item.isChecked }))} />
+                        onClick={() => handleCheck({ id: item._id, isChecked: !item.isChecked })} />
                       <Text
                         as={item.isChecked ? 'del' : null}
                         opacity={item.isChecked ? '0.5' : null}
@@ -92,8 +140,7 @@ const ShoppingList = () => {
                         colorScheme='error'
                         icon={<DeleteIcon />}
                         isRound
-                        onClick={() => dispatch(deleteItem({ id: item._id }))}
-                      />
+                        onClick={() => handleDelete({ id: item._id })} />
                     </HStack>
                   </ListItem>
                 </Fade>
