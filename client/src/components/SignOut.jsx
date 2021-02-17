@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 
 import { logout } from '../redux/slices/AuthSlice';
 
-const SignOut = ({ variant = 'outline' }) => {
+const SignOut = ({ variant = 'outline', size = 'md' }) => {
 
 
   const dispatch = useDispatch();
@@ -32,6 +32,7 @@ const SignOut = ({ variant = 'outline' }) => {
 
     <Button colorScheme="primary"
       variant={variant}
+      size={size}
       onClick={() => dispatch(logout())}
     >Sign Out</Button>
   );

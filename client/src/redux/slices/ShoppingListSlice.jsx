@@ -26,7 +26,7 @@ const shoppingListSlice = createSlice({
       }));
     },
     [addItem.fulfilled]: (state, action) => {
-      state.shoppingList = [{ name: action.payload.name, isChecked: false }, ...state.shoppingList];
+      state.shoppingList = [{ name: action.payload.name, isChecked: false, _id: action.payload._id }, ...state.shoppingList];
     },
     [deleteItem.rejected]: (state, action) => {
       console.log(action.payload.response);

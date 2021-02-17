@@ -79,7 +79,7 @@ const AppNavbar = () => {
           width={{ base: '90%', lg: '75%' }}
         >
 
-          <ColorModeSwitcher />
+          <ColorModeSwitcher size='sm' />
 
           <Box fontWeight='bold' fontSize='lg' >
             <Link href='/'>Shopping List</Link>
@@ -87,7 +87,7 @@ const AppNavbar = () => {
 
 
           {isAuthenticated ?
-            <SignOut />
+            <SignOut size='sm' />
 
             :
 
@@ -96,6 +96,7 @@ const AppNavbar = () => {
                 as={IconButton}
                 icon={<HamburgerIcon />}
                 variant='outline'
+                size='sm'
               />
               <MenuList>
                 <Stack p={2}>

@@ -20,8 +20,8 @@ export const addItem = createAsyncThunk("shoppingList/addItem",
   async (new_item, { rejectWithValue, getState }) => {
 
     try {
-      await axios.post('/api/items', new_item, tokenConfig(getState));
-      return new_item;
+      const res = await axios.post('/api/items', new_item, tokenConfig(getState));
+      return res.data;
 
     } catch (err) {
       return rejectWithValue({ data: err.response.data, status: err.response.status });
